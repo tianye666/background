@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tianye.mapper.AlbumMapper">
+    <resultMap type="com.tianye.entity.Album" id="rm1">
+        <id column="id" property="id"></id>
+        <result column="title" property="title"></result>
+        <result column="count" property="count"></result>
+        <result column="cover_img" property="coverImg"></result>
+        <result column="score" property="score"></result>
+        <result column="author" property="author"></result>
+        <result column="broadcast" property="broadcast"></result>
+        <result column="brief" property="brief"></result>
+        <result column="publish_date" property="publishDate"></result>
+        <collection property="children" ofType="com.tianye.entity.Chapter">
+            <id column="cid" property="id"></id>
+            <result column="ctitle" property="title"></result>
+            <result column="size" property="size"></result>
+            <result column="duration" property="duration"></result>
+            <result column="url" property="url"></result>
+            <result column="upload_date" property="uploadDate"></result>
+
+        </collection>
+    </resultMap>
+    <select id="queryAllAlbumByPage" resultMap="rm1">
+
+        select a.* ,c.id cid,c.title ctitle,c.size size,c.duration duration,c.url url,c.upload_date upload_date
+        from (select * from album limit ${(page-1)*rows},${rows})a
+              left join chapter c
+        on c.album_id=a.id
+    </select>
+
+    <select id="queryAllAlbum" resultMap="rm1">
+
+        select a.* ,c.id cid,c.title ctitle,c.size size,c.duration duration,c.url url,c.upload_date upload_date
+        from album a
+              left join chapter c
+        on c.album_id=a.id
+    </select>
+
+
+</mapper>

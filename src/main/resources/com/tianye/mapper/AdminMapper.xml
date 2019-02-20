@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.tianye.mapper.AdminMapper">
+    <resultMap id="map1" type="com.tianye.entity.Admin">
+        <id column="id" property="id"></id>
+        <result column="username" property="username"></result>
+        <result column="password" property="password"></result>
+        <result column="salt" property="salt" ></result>
+        <collection property="roles" ofType="com.tianye.entity.Role">
+            <id column="roleId" property="id"></id>
+            <result column="roleName" property="roleName"></result>
+            <collection property="authorities" ofType="com.tianye.entity.Authority">
+                <id column="authorityId" property="id"></id>
+                <result column="authorityName" property="authorityName"></result>
+            </collection>
+        </collection>
+    </resultMap>
+    <select id="queryAdminByUsername" resultMap="map1">
+        select ad.id as id , ad.username as username , ad.password as password ,ad.salt as salt,ee.*
+        from admin ad LEFT JOIN
+                 (select r.id as roleId ,r.role_name as roleName ,a.id as authorityId, a.authority_name as authorityName
+                  from role r LEFT JOIN role_authority ra on r.id=ra.role_id LEFT JOIN authority a on a.id = ra.authority_id)ee
+                 on ad.id = ee.roleId where username = #{username}
+    </select>
+</mapper>
